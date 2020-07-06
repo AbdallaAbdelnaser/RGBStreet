@@ -24,7 +24,7 @@ public int minCost(int i, int lastColor) {
 	if(lastColor!=1)
 		max=Math.min(max,g[i]+minCost(i+1,1));
 	
-	if(lastColor!=0)
+	if(lastColor!=2)
 		max=Math.min(max,b[i]+minCost(i+1,2));
 	
 	return memo[i][lastColor]=max;
