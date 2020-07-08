@@ -1,6 +1,6 @@
 public class RowAndManyCoins {
-	static int cnt, bestCnt, firstIndex, bestFirstIndex, lastIndex, bestLastIndex;
-	static char[] row;
+	 int cnt, bestCnt, firstIndex, bestFirstIndex, lastIndex, bestLastIndex;
+	 char[] row;
 
 	public String getWinner(String cells) {
 
