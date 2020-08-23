@@ -1,0 +1,157 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.io.ObjectInputStream.GetField;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
+import java.util.TreeMap;
+import java.text.*;
+
+public class Main {
+	final static int INF = 50;
+	static String desiredColor, col = "RGB";
+	static int stampCost, pushCost, n, L;
+	static int[][][] dp;// start index,length,color
+
+	public static void main(String[] args) throws IOException {
+		FastReader in = new FastReader();
+		PrintWriter out = new PrintWriter(System.out);
+		System.out.println(getMinimumCost(in.next(), in.nextInt(), in.nextInt()));
+		out.close();
+
+	}
+
+	public static int getMinimumCost(String desiredColor, int stampCost, int pushCost) {
+		n = desiredColor.length();
+		dp = new int[n + 1][n + 1][4];
+		for (int i = 0; i < dp.length; i++)
+			for (int j = 0; j < dp[i].length; j++)
+				Arrays.fill(dp[i][j], -1);
+		Main.desiredColor = desiredColor;
+		Main.stampCost = stampCost;
+		Main.pushCost = pushCost;
+		int res = n * pushCost + stampCost;
+		for (int L = 1; L <= n; L++) {
+			Main.L = L;
+			for (int c = 0; c < 3; c++) {
+				int cur = stampCost * L;
+				int pushCount = go(0, c);
+				cur += pushCost * pushCount;
+				res = Math.min(res, cur);
+			}
+		}
+
+		return res;
+	}
+
+	private static int go(int startIndex, int color) {
+		if (startIndex + L > n)
+			return INF;
+		if (dp[startIndex][L][color] != -1)
+			return dp[startIndex][L][color];
+		String sub = desiredColor.substring(startIndex, startIndex + L);
+		boolean can = can(sub, col.charAt(color));
+		if (can && startIndex + L == n)
+			return 1;
+		int res = INF;
+		if (can) {
+			for (int i = 1; i < L; i++)
+				res = Math.min(res, 1 + go(startIndex + i, color));
+			for (int c = 0; c < 3; c++)
+				res = Math.min(res, 1 + go(startIndex + L, c));
+		}
+
+		return dp[startIndex][L][color] = res;
+
+	}
+
+	private static boolean can(String s, char color) {
+		for (char c : s.toCharArray())
+			if (c != '*' && c != color)
+				return false;
+		return true;
+	}
+
+}
+
+class FastReader {
+	BufferedReader br;
+	StringTokenizer st;
+
+	public FastReader() {
+		br = new BufferedReader(new InputStreamReader(System.in));
+
+	}
+
+	public FastReader(File f) throws FileNotFoundException {
+		br = new BufferedReader(new FileReader(f));
+	}
+
+	String next() {
+		while (st == null || !st.hasMoreElements()) {
+			try {
+				st = new StringTokenizer(br.readLine());
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		return st.nextToken();
+
+	}
+
+	int nextInt() {
+
+		return Integer.parseInt(next());
+	}
+
+	double nextDouble() {
+
+		return Double.parseDouble(next());
+	}
+
+	long nextLong() {
+
+		return Long.parseLong(next());
+	}
+
+	String nextLine() {
+		String str = "";
+		try {
+			str = br.readLine();
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		return str;
+
+	}
+
+	boolean ready() throws IOException {
+		return br.ready();
+	}
+}
